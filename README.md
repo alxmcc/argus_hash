@@ -1,5 +1,5 @@
 # argus_hash
-Excludes Argus header/footer information and hashes content. Header/Footer are both 128 bytes. Script checks input is a argus binary, then hashes excluding header/footer.
+Excludes Argus binary header/footer information and hashes content. Header/Footer are both 128 bytes. Script checks input is a argus binary, then hashes excluding header/footer.
 
 ## Alternative Method
 ```bash
