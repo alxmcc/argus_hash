@@ -1,7 +1,7 @@
 # argus_hash
 Excludes Argus header/footer information and hashes content. Header/Footer are both 128 bytes. Script checks input is a argus binary, then hashes excluding header/footer.
 
-## Bash Alternative
+## Alternative Method
 ```bash
 $ > tail -c +129 file.argus | head -c -128 | md5sum
 ```
