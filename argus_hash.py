@@ -40,8 +40,8 @@ def main():
                     print(argus_file, 'is not a Argus binary. Skipping.')
                     continue
 
-        except IsADirectoryError:
-            print(argus_file, 'is a directory. Skipping.')
+        except (IsADirectoryError, FileNotFoundError, IOError):
+            print(argus_file, 'not a valid file or file not found. Skipping.')
             continue
 
     print('\n{: <40} {: <34} {}'.format('Filename', 'Full MD5', 'Content MD5'))
