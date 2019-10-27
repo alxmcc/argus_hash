@@ -34,7 +34,7 @@ def main():
                     f.seek(0)
                     full_hash = md5_hash(f.read())
                     f.seek(128)
-                    data = f.read(os.path.getsize(argus_file) - 256)
+                    data = f.read(os.path.getsize(argus_file) - 256)  # -256 since seek(128), excludes last 128 bytes
                     argus_dict[argus_file] = [full_hash, md5_hash(data)]
                 else:
                     print(argus_file, 'is not a Argus binary. Skipping.')
