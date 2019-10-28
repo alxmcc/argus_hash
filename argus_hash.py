@@ -42,6 +42,7 @@ def main():
                         break  # only want first header match and last footer match
                     if content:
                             argus_dict[argus_file] = [full_hash, md5_hash(content)]
+                            content = b'' 
                     else:
                         print(argus_file, 'has header, but no footer. Skipped.')
                 else:
