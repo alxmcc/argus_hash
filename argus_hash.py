@@ -38,7 +38,7 @@ def main():
                         head_slice = data[header.end():]
                         for footer in re.finditer(argus_footer, head_slice):
                             content = head_slice[:footer.start()]
-                            break  # only want first header match and last footer match
+                        break  # only want first header match and last footer match
                     if content:
                             argus_dict[argus_file] = [full_hash, md5_hash(content)]
                     else:
