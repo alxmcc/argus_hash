@@ -6,13 +6,11 @@ author: github.com/alxmcc
 
 import hashlib
 import re
-import os
 import argparse
 
 
-def argus_header(file_header):
-    argus_header = re.compile(b'\x83\x10\x00\x20\00{4}\xE5\x71\x2D\xCB')
-    return True if argus_header.match(file_header) else False
+def match_header(file_header, regex_header):
+    return True if regex_header.match(file_header) else False
 
 
 def md5_hash(content):
@@ -26,16 +24,22 @@ def main():
     parser.add_argument('input', nargs='+', help='Input filename(s).')
     args = parser.parse_args()
     argus_dict = {}
+    argus_header = re.compile(b'\x83\x10\x00\x20\x00{4}\xE5\x71\x2D\xCB[\x00-\xFF]{112}\xFF{4}')
+    argus_footer = re.compile(b'\x83\x30\x00\x20\x00{20}[\x00-\xFF]{100}\xFF{4}')
 
     for argus_file in args.input:
         try:
             with open(argus_file, 'rb') as f:
-                if argus_header(f.read(12)):
+                if match_header(f.read(128), argus_header):
                     f.seek(0)
-                    full_hash = md5_hash(f.read())
-                    f.seek(128)
-                    data = f.read(os.path.getsize(argus_file) - 256)  # -256 since seek(128), excludes last 128 bytes
-                    argus_dict[argus_file] = [full_hash, md5_hash(data)]
+                    data = f.read()
+                    full_hash = md5_hash(data)
+                    for header in re.finditer(argus_header, data):
+                        head_slice = data[header.end():]
+                        for footer in re.finditer(argus_footer, head_slice):
+                            content = head_slice[:footer.start()]
+                        break  # only want first header match and last footer match
+                    argus_dict[argus_file] = [full_hash, md5_hash(content)]
                 else:
                     print(argus_file, 'is not a Argus binary. Skipping.')
                     continue
@@ -43,10 +47,12 @@ def main():
         except (IsADirectoryError, FileNotFoundError, IOError):
             print(argus_file, 'not a valid file or file not found. Skipping.')
             continue
-
-    print('\n{: <40} {: <34} {}'.format('Filename', 'Full MD5', 'Content MD5'))
-    for k, v in argus_dict.items():
-        print('{: <40} {: <34} {}'.format(k, v[0], v[1]))
+    if argus_dict:
+        print('\n{: <44} {: <34} {}'.format('Filename', 'Full MD5', 'Content MD5'))
+        for k, v in argus_dict.items():
+            print('{: <44} {: <34} {}'.format(k, v[0], v[1]))
+    else:
+        print('No Argus binary files found.')
 
 
 if __name__ == "__main__":
