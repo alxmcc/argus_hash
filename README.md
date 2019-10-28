@@ -2,7 +2,7 @@
 Excludes Argus binary header/footer information and hashes content. Header/Footer are both 128 bytes. Script checks input is a argus binary, then hashes excluding header/footer.
 
 ## Alternative Method
-Use only if sure it is an argus binary. Python script will check headers/footers to confirm file is an argus binary.
+Use only if sure it is an argus binary. Python script will check header/footer to confirm file is an argus binary.
 
 ```bash
 $ > tail -c +129 file.argus | head -c -128 | md5sum
