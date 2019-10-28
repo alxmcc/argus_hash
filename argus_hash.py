@@ -26,7 +26,7 @@ def main():
     argus_dict = {}
     argus_header = re.compile(b'\x83\x10\x00\x20\x00{4}\xE5\x71\x2D\xCB[\x00-\xFF]{112}\xFF{4}')
     argus_footer = re.compile(b'\x83\x30\x00\x20\x00{20}[\x00-\xFF]{100}\xFF{4}')
-
+    content = b''  # set empty for footer check
     for argus_file in args.input:
         try:
             with open(argus_file, 'rb') as f:
@@ -38,11 +38,15 @@ def main():
                         head_slice = data[header.end():]
                         for footer in re.finditer(argus_footer, head_slice):
                             content = head_slice[:footer.start()]
+                            break  # only want first header match and last footer match
+                    if content:
                             argus_dict[argus_file] = [full_hash, md5_hash(content)]
-                        break  # only want first header match and last footer match
+                    else:
+                        print(argus_file, 'has header, but no footer. Skipped.')
                 else:
                     print(argus_file, 'is not a Argus binary. Skipping.')
                     continue
+
         except (IsADirectoryError, FileNotFoundError, IOError):
             print(argus_file, 'not a valid file or file not found. Skipping.')
             continue
