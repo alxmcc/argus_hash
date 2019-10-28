@@ -45,8 +45,7 @@ def main():
                         print(argus_file, 'has header, but no footer. Skipped.')
                 else:
                     print(argus_file, 'is not a Argus binary. Skipping.')
-                    continue
-
+                    
         except (IsADirectoryError, FileNotFoundError, IOError):
             print(argus_file, 'not a valid file or file not found. Skipping.')
             continue
